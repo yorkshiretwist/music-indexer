@@ -11,6 +11,6 @@ namespace MusicIndexer.Models
 
         public int Year { get; set; }
 
-        public ICollection<Track> Tracks { get; set; } = new List<Track>();
+        public List<Track> Tracks { get; set; } = new List<Track>();
     }
 }

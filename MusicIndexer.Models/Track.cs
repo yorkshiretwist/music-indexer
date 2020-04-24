@@ -16,11 +16,11 @@ namespace MusicIndexer.Models
 
         public string Album { get; set; }
 
-        public ICollection<string> Performers { get; set; } = new List<string>();
+        public List<string> Performers { get; set; } = new List<string>();
 
-        public ICollection<string> AlbumArtists { get; set; } = new List<string>();
+        public List<string> AlbumArtists { get; set; } = new List<string>();
 
-        public ICollection<string> Genres { get; set; } = new List<string>();
+        public List<string> Genres { get; set; } = new List<string>();
 
         public string Path { get; set; }
 
@@ -32,7 +32,7 @@ namespace MusicIndexer.Models
 
         public int BitsPerSample { get; set; }
 
-        public ICollection<string> Codecs { get; set; } = new List<string>();
+        public List<string> Codecs { get; set; } = new List<string>();
 
         public string Description { get; set; }
 
@@ -40,7 +40,7 @@ namespace MusicIndexer.Models
 
         public TimeSpan Duration { get; set; }
 
-        public ICollection<string> Composers { get; set; } = new List<string>();
+        public List<string> Composers { get; set; } = new List<string>();
 
         public string Comment { get; set; }
     }

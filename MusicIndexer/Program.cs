@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using CommandLine;
 using MusicIndexer.Models;
 
@@ -10,9 +11,8 @@ namespace MusicIndexer
     class Program
     {
         static Options options;
-        static ICollection<string> scannedPaths { get; set; } = new List<string>();
-        static ICollection<Artist> artists { get; set; } = new List<Artist>();
-        static ICollection<Album> albums { get; set; } = new List<Album>();
+        static ICollection<string> ScannedPaths { get; set; } = new List<string>();
+        static ICollection<Track> Tracks { get; set; } = new List<Track>();
 
         static void Main(string[] args)
         {
@@ -72,6 +72,11 @@ namespace MusicIndexer
 
         static void Start(Options opts)
         {
+            if (string.IsNullOrWhiteSpace(opts.OutputPath))
+            {
+                opts.OutputPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            }
+
             options = opts;
 
             if (options.Verbose)
@@ -90,6 +95,20 @@ namespace MusicIndexer
 
             var directoryInfo = new DirectoryInfo(options.Path);
             ScanDirectory(directoryInfo);
+
+            SaveFiles();
+        }
+
+        private static void SaveFiles()
+        {
+            var outputPath = Path.Combine(options.OutputPath, "MusicIndexerOutput");
+            if (!Directory.Exists(outputPath))
+            {
+                Directory.CreateDirectory(outputPath);
+            }
+
+            var tracksString = JsonSerializer.Serialize(Tracks);
+            File.WriteAllText(Path.Combine(outputPath, "tracks.json"), tracksString);
         }
 
         private static void ScanDirectory(DirectoryInfo directory)
@@ -99,7 +118,7 @@ namespace MusicIndexer
                 Verbose($"Scanning {directory.FullName}");
             }
 
-            scannedPaths.Add(directory.FullName);
+            ScannedPaths.Add(directory.FullName);
 
             try
             {
@@ -178,6 +197,13 @@ namespace MusicIndexer
                 Verbose($"- Description: {track.Description}");
                 Verbose($"- Comment: {track.Comment}", true);
             }
+
+            IndexTrack(track);
+        }
+
+        private static void IndexTrack(Track track)
+        {
+            Tracks.Add(track);
         }
 
         private static Track ConstructTrack(FileInfo file, TagLib.File tagFile)
@@ -188,9 +214,9 @@ namespace MusicIndexer
                 TrackNumber = (int)tagFile.Tag.Track,
                 Year = (int)tagFile.Tag.Year,
                 Album = tagFile.Tag.Album,
-                Performers = tagFile.Tag.Performers,
-                AlbumArtists = tagFile.Tag.AlbumArtists,
-                Genres = tagFile.Tag.Genres,
+                Performers = tagFile.Tag.Performers?.ToList(),
+                AlbumArtists = tagFile.Tag.AlbumArtists?.ToList(),
+                Genres = tagFile.Tag.Genres?.ToList(),
                 Path = file.FullName,
                 AudioBitrate = tagFile.Properties.AudioBitrate,
                 AudioChannels = tagFile.Properties.AudioChannels,
@@ -199,7 +225,7 @@ namespace MusicIndexer
                 Codecs = tagFile.Properties.Codecs.Select(c => c.ToString()).ToList(),
                 Description = tagFile.Properties.Description,
                 BeatsPerMinute = (int)tagFile.Tag.BeatsPerMinute,
-                Composers = tagFile.Tag.Composers,
+                Composers = tagFile.Tag.Composers?.ToList(),
                 Comment = tagFile.Tag.Comment,
                 Duration = tagFile.Properties.Duration
             };

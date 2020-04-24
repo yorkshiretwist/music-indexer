@@ -19,5 +19,11 @@ namespace MusicIndexer
         /// </summary>
         [Option('p', "path", Required = true, HelpText = "Set the path at which to start scanning files.")]
         public string Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating the path at which to start scanning files
+        /// </summary>
+        [Option('o', "outputPath", Required = false, HelpText = "Set the path in which to write the output files.")]
+        public string OutputPath { get; set; }
     }
 }

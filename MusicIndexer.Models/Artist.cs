@@ -9,6 +9,6 @@ namespace MusicIndexer.Models
     {
         public string Name { get; set; }
 
-        public ICollection<Album> Albums { get; set; } = new List<Album>();
+        public List<Album> Albums { get; set; } = new List<Album>();
     }
 }
