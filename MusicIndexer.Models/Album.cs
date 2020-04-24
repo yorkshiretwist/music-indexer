@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace MusicIndexer.Models
 {
@@ -9,11 +7,9 @@ namespace MusicIndexer.Models
     /// </summary>
     public class Album
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
 
-        public int YearOfRelease { get; set; }
-
-        public int YearOfRecording { get; set; }
+        public int Year { get; set; }
 
         public ICollection<Track> Tracks { get; set; } = new List<Track>();
     }

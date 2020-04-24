@@ -25,4 +25,8 @@
     <PackageReference Include="taglib" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MusicIndexer.Models\MusicIndexer.Models.csproj" />
+  </ItemGroup>
+
 </Project>
