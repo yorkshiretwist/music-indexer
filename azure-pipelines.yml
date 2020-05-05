@@ -19,4 +19,9 @@ steps:
     majorVersion: '1'
     minorVersion: '0'
     patchVersion: '0'
-    
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    publishVstsFeed: '<projectName>/<feed>'
+    allowPackageConflicts: true
