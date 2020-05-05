@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MusicIndexer.Models
 {
@@ -16,9 +17,40 @@ namespace MusicIndexer.Models
 
         public string Album { get; set; }
 
+        public IEnumerable<string> Artists
+        {
+            get
+            {
+                var artists = AlbumArtists;
+                artists.AddRange(Performers);
+                return artists.Distinct();
+            }
+        }
+
+        public IEnumerable<string> ArtistsWithAlbum
+        {
+            get
+            {
+                return AlbumArtists.Select(a => $"{a} - {Album}").Distinct();
+            }
+        }
+
         public List<string> Performers { get; set; } = new List<string>();
 
-        public List<string> AlbumArtists { get; set; } = new List<string>();
+        public List<string> AlbumArtists 
+        { 
+            get
+            {
+                // even though there is one Tag.AlbumArtist in some tracks, multiple ones were being passed to this property
+                // dirty hack time
+                return _albumArtists.Distinct().ToList();
+            }
+            set
+            {
+                _albumArtists = value;
+            }
+        }
+        private List<string> _albumArtists = new List<string>();
 
         public List<string> Genres { get; set; } = new List<string>();
 

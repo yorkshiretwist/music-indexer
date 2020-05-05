@@ -2,7 +2,7 @@
   "profiles": {
     "MusicIndexer": {
       "commandName": "Project",
-      "commandLineArgs": "-p D:\\ -v true"
+      "commandLineArgs": "-p F:\\music"
     }
   }
 }

@@ -109,6 +109,40 @@ namespace MusicIndexer
 
             var tracksString = JsonSerializer.Serialize(Tracks);
             File.WriteAllText(Path.Combine(outputPath, "tracks.json"), tracksString);
+
+            var artists = Tracks
+                .SelectMany(t => t.Artists, (track, artists) => new { track, artists })
+                .GroupBy(t => t.artists, t => t.track)
+                .Select(g => new { Artist = g.Key, TrackCount = g.Count() });
+            var artistsString = JsonSerializer.Serialize(artists.Distinct().OrderBy(a => a.Artist));
+            File.WriteAllText(Path.Combine(outputPath, "artists.json"), artistsString);
+
+            var albumGroupings = Tracks
+                .SelectMany(t => t.ArtistsWithAlbum, (track, albumWithArtists) => new { track, albumWithArtists })
+                .GroupBy(t => t.albumWithArtists, t => t.track)
+                .Select(g => new { Album = g.Key, TrackCount = g.Count() });
+            var albumsString = JsonSerializer.Serialize(albumGroupings.OrderBy(a => a.Album));
+            File.WriteAllText(Path.Combine(outputPath, "albums.json"), albumsString);
+
+            var genreGroupings = Tracks
+                .SelectMany(t => t.Genres, (track, genre) => new { track, genre })
+                .GroupBy(t => t.genre, t => t.track)
+                .Select(g => new { Genre = g.Key, TrackCount = g.Count() });
+            var genresString = JsonSerializer.Serialize(genreGroupings.OrderBy(a => a.Genre));
+            File.WriteAllText(Path.Combine(outputPath, "genres.json"), genresString);
+
+            var longestTracks = Tracks
+                .OrderByDescending(x => x.Duration)
+                .Take(25);
+            var longestTracksString = JsonSerializer.Serialize(longestTracks);
+            File.WriteAllText(Path.Combine(outputPath, "longest-tracks.json"), longestTracksString);
+
+            var shortestTracks = Tracks
+                .Where(x => x.Duration > new TimeSpan())
+                .OrderBy(x => x.Duration)
+                .Take(25);
+            var shortestTracksString = JsonSerializer.Serialize(shortestTracks);
+            File.WriteAllText(Path.Combine(outputPath, "shortest-tracks.json"), shortestTracksString);
         }
 
         private static void ScanDirectory(DirectoryInfo directory)
@@ -145,10 +179,8 @@ namespace MusicIndexer
                 ScanDirectory(subDirectory);
             }
 
-            if (options.Verbose)
-            {
-                Verbose($"Scanned {directory.FullName}");
-            }
+            Write($"Scanned {directory.FullName}", false);
+            Write($"{Tracks.Count} tracks indexed so far");
         }
 
         private static void ReadFile(FileInfo file)
@@ -172,6 +204,15 @@ namespace MusicIndexer
             if (tagFile == null)
             {
                 Error($"Could not create tag file for '{file.FullName}'");
+                return;
+            }
+
+            if (!tagFile.Properties.MediaTypes.HasFlag(TagLib.MediaTypes.Audio))
+            {
+                if (options.Verbose)
+                {
+                    Verbose($"File '{file.FullName}; is not an audio file", true);
+                }
                 return;
             }
 
@@ -210,22 +251,22 @@ namespace MusicIndexer
         {
             return new Track
             {
-                Title = tagFile.Tag.Title,
+                Title = tagFile.Tag.Title?.Trim(),
                 TrackNumber = (int)tagFile.Tag.Track,
                 Year = (int)tagFile.Tag.Year,
-                Album = tagFile.Tag.Album,
-                Performers = tagFile.Tag.Performers?.ToList(),
-                AlbumArtists = tagFile.Tag.AlbumArtists?.ToList(),
-                Genres = tagFile.Tag.Genres?.ToList(),
+                Album = tagFile.Tag.Album?.Trim(),
+                Performers = tagFile.Tag.Performers?.Select(x => x.Trim()).ToList(),
+                AlbumArtists = tagFile.Tag.AlbumArtists?.Select(x => x.Trim()).Distinct().ToList(),
+                Genres = tagFile.Tag.Genres?.Select(x => x.Trim()).ToList(),
                 Path = file.FullName,
                 AudioBitrate = tagFile.Properties.AudioBitrate,
                 AudioChannels = tagFile.Properties.AudioChannels,
                 AudioSampleRate = tagFile.Properties.AudioSampleRate,
                 BitsPerSample = tagFile.Properties.BitsPerSample,
-                Codecs = tagFile.Properties.Codecs.Select(c => c.ToString()).ToList(),
+                Codecs = tagFile.Properties.Codecs?.Select(c => c?.ToString()).ToList(),
                 Description = tagFile.Properties.Description,
                 BeatsPerMinute = (int)tagFile.Tag.BeatsPerMinute,
-                Composers = tagFile.Tag.Composers?.ToList(),
+                Composers = tagFile.Tag.Composers?.Select(x => x.Trim()).ToList(),
                 Comment = tagFile.Tag.Comment,
                 Duration = tagFile.Properties.Duration
             };
