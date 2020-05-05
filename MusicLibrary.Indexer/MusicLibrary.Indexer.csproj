@@ -7,8 +7,8 @@
     <Company />
     <Description>.net core console app for indexing music files and producing structured data files</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/yorkshiretwist/music-indexer</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yorkshiretwist/music-indexer</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/yorkshiretwist/music-library-indexer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yorkshiretwist/music-library-indexer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Chris Taylor - MIT License</Copyright>
   </PropertyGroup>

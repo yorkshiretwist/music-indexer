@@ -6,7 +6,7 @@ using System.Text.Json;
 using CommandLine;
 using MusicIndexer.Models;
 
-namespace MusicIndexer
+namespace MusicLibrary.Indexer
 {
     class Program
     {

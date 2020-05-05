@@ -1,7 +1,7 @@
 ﻿using System;
 using CommandLine;
 
-namespace MusicIndexer
+namespace MusicLibrary.Indexer
 {
     /// <summary>
     /// Represents options that can be passed via command line to the app
