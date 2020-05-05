@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using CommandLine;
-using MusicIndexer.Models;
+using MusicLibrary.Models;
 
 namespace MusicLibrary.Indexer
 {

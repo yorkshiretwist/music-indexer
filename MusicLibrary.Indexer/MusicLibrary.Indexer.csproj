@@ -22,11 +22,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    <PackageReference Include="MusicLibrary.Models" Version="1.0.0-CI-20200505-124045" />
     <PackageReference Include="taglib" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MusicIndexer.Models\MusicIndexer.Models.csproj" />
   </ItemGroup>
 
 </Project>
