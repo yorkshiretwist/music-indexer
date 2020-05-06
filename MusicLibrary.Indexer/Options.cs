@@ -25,5 +25,13 @@ namespace MusicLibrary.Indexer
         /// </summary>
         [Option('o', "outputPath", Required = false, HelpText = "Set the path in which to write the output files.")]
         public string OutputPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value containing the connection string to allow pushing data to a MongoDB-compatible database
+        /// </summary>
+        /// <remarks>
+        /// This is not exposed as an option
+        /// </remarks>
+        public string MongoConnectionString { get; set; }
     }
 }

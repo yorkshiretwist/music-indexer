@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Chris Taylor</Authors>
     <Company />
-    <Description>.net core console app for indexing music files and producing structured data files</Description>
+    <Description>.net core console app for indexing music files, producing structured data files, and optionally pushing to a MongoDB-compatible database</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/yorkshiretwist/music-library-indexer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/yorkshiretwist/music-library-indexer</RepositoryUrl>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
     <PackageReference Include="MusicLibrary.Models" Version="1.0.0-CI-20200505-124045" />
     <PackageReference Include="taglib" Version="2.1.0" />
   </ItemGroup>

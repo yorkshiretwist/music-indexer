@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text.Json;
 using CommandLine;
+using MongoDB.Driver;
 using MusicLibrary.Models;
 
 namespace MusicLibrary.Indexer
@@ -77,6 +79,9 @@ namespace MusicLibrary.Indexer
                 opts.OutputPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             }
 
+            Write("Do you want to push the data to a MongoDB-compatible database? If so enter the connnection string here, then press enter to continue:");
+            opts.MongoConnectionString = Console.ReadLine();
+
             options = opts;
 
             if (options.Verbose)
@@ -97,6 +102,39 @@ namespace MusicLibrary.Indexer
             ScanDirectory(directoryInfo);
 
             SaveFiles();
+            PushData();
+        }
+
+        private static void PushData()
+        {
+            if (string.IsNullOrWhiteSpace(options.MongoConnectionString))
+            {
+                Verbose("No MongoDB connection string was entered, so data is not being pushed to a database");
+                return;
+            }
+
+            var settings = MongoClientSettings.FromUrl(
+              new MongoUrl(options.MongoConnectionString)
+            );
+            settings.SslSettings = new SslSettings() 
+            { 
+                EnabledSslProtocols = SslProtocols.Tls12 
+            };
+            var mongoClient = new MongoClient(settings);
+            var database = mongoClient.GetDatabase("yorkshiretwist-music-library");
+
+            database.DropCollection("tracks");
+            database.CreateCollection("tracks");
+
+            Write("Pushing tracks to MongoDB");
+            var batchNo = 1;
+            var tracksCollection = database.GetCollection<Track>("tracks");
+            foreach (var set in Tracks.InSetsOf(100))
+            {
+                Verbose($"Batch {batchNo}");
+                tracksCollection.InsertMany(set);
+                batchNo++;
+            }
         }
 
         private static void SaveFiles()
